@@ -23,6 +23,7 @@ static NSString * const kTextKey = @"text";
 static NSString * const kExclusionPathsKey = @"exclusionPaths";
 static NSString * const kLineFragmentPaddingKey = @"lineFragmentPadding";
 static NSString * const kTextContainerInsetKey = @"textContainerInset";
+static NSString * const kContentSize = @"contentSize";
 
 @implementation SZTextView
 
@@ -103,6 +104,8 @@ static NSString * const kTextContainerInsetKey = @"textContainerInset";
     [self addObserver:self forKeyPath:kAttributedTextKey
               options:NSKeyValueObservingOptionNew context:nil];
     [self addObserver:self forKeyPath:kTextKey
+              options:NSKeyValueObservingOptionNew context:nil];
+    [self addObserver:self forKeyPath:kContentSize
               options:NSKeyValueObservingOptionNew context:nil];
 
     if (HAS_TEXT_CONTAINER) {
@@ -189,8 +192,22 @@ static NSString * const kTextContainerInsetKey = @"textContainerInset";
         NSValue *value = [change objectForKey:NSKeyValueChangeNewKey];
         self._placeholderTextView.textContainerInset = value.UIEdgeInsetsValue;
     }
+    else if ([keyPath isEqualToString:kContentSize]) {
+        [self verticallyCenterTextView];
+    }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)verticallyCenterTextView
+{
+    if (self.isVerticallyAligned) {
+        CGFloat topCorrect = (self.bounds.size.height - self.contentSize.height * self.zoomScale) / 2.0;
+        topCorrect = MAX(0.0, topCorrect);
+        CGPoint contentOffset = self.contentOffset;
+        contentOffset.y = -topCorrect;
+        self.contentOffset = contentOffset;
     }
 }
 
