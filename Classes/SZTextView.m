@@ -251,6 +251,7 @@ static NSString * const kContentSize = @"contentSize";
     [self removeObserver:self forKeyPath:kFontKey];
     [self removeObserver:self forKeyPath:kAttributedTextKey];
     [self removeObserver:self forKeyPath:kTextKey];
+    [self removeObserver:self forKeyPath:kContentSize];
 
     if (HAS_TEXT_CONTAINER) {
         [self.textContainer removeObserver:self forKeyPath:kExclusionPathsKey];
